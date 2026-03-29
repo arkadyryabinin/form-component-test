@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-// ----- СХЕМА ВАЛИДАЦИИ ДЛЯ ZOD 4 -----
+// ----- СХЕМА ВАЛИДАЦИИ ДЛЯ ZOD -----
 const depositSchema = z
   .object({
     bankName: z.string().min(1, "Название банка обязательно"),
@@ -16,7 +16,7 @@ const depositSchema = z
       .number()
       .min(0.01, "Ставка должна быть больше 0")
       .max(30, "Ставка не может превышать 30%"),
-    autoRenewal: z.enum(["yes", "no"]),
+    autoRenewal: z.boolean(),
   })
   .refine(
     (data) => {
@@ -44,7 +44,9 @@ export const DepositForm = () => {
       bankName: "",
       startDate: "",
       endDate: "",
-      autoRenewal: "no",
+      amount: undefined,
+      interestRate: undefined,
+      autoRenewal: false,
     },
   });
 
@@ -117,19 +119,15 @@ export const DepositForm = () => {
         )}
       </div>
 
-      {/* АВТОПРОЛОНГАЦИЯ */}
+      {/* АВТОПРОЛОНГАЦИЯ - ТЕПЕРЬ ЧЕКБОКС */}
       <div style={fieldStyle}>
-        <label>Автопролонгация</label>
-        <div style={{ display: "flex", gap: "1rem" }}>
-          <label>
-            <input type="radio" value="yes" {...register("autoRenewal")} />
-            Да
-          </label>
-          <label>
-            <input type="radio" value="no" {...register("autoRenewal")} />
-            Нет
-          </label>
-        </div>
+        <label style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <input
+            type="checkbox"
+            {...register("autoRenewal")}
+          />
+          Автопролонгация
+        </label>
       </div>
 
       <button type="submit" disabled={isSubmitting} style={buttonStyle}>
